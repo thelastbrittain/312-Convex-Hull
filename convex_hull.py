@@ -1,6 +1,6 @@
 # Uncomment this line to import some functions that can help
 # you debug your algorithm
-from plotting import draw_line, draw_hull, circle_point, plot_points  # type: ignore
+from plotting import draw_line, plot_points  # type: ignore
 from NodeClass import Node
 from test_utils import is_convex_hull  # type: ignore
 
@@ -38,7 +38,7 @@ def compute_hull(points: list[tuple[float, float]]) -> list[tuple[float, float]]
 
 # actually want this to return a list of nodes
 def divide_and_conquer(points: list[tuple[float, float]]) -> list[Node]:
-    if len(points) <= 1:
+    if len(points) == 1:
         return createNodes(points)
     else:
         # assert that this splits list into two halves
@@ -54,8 +54,9 @@ def combine(lList: list[Node], rList: list[Node]) -> list[Node]:
     lowerBound: tuple[Node | None, Node | None] = findLowerTangent(lList, rList)
     # remove unnecesary edges
     removeBadNodeConnections(upperBound, lowerBound)
-    lList.extend(rList)
-    return lList
+    # lList.extend(rList)
+    newList = [lList[0], rList[len(rList) - 1]]
+    return newList
 
 
 def removeBadNodeConnections(
@@ -196,62 +197,6 @@ def createNodes(points: list[tuple[float, float]]) -> list[Node]:
     soloNode.set_lNode(soloNode)
     soloNode.set_rNode(soloNode)
     return [soloNode]
-
-
-def calibrateTriangle(nodes: list[Node]) -> None:
-    """
-    This should be called on a list of three nodes
-    It sets attributes so that lNode and rNode are correct for each node
-    If the slope from L->R is less than from M->R, then it should be a normal case
-
-    """
-    lNode = nodes[0]
-    mNode = nodes[1]
-    rNode = nodes[2]
-    if calculate_slope(lNode.get_point(), rNode.get_point()) < calculate_slope(
-        mNode.get_point(), rNode.get_point()
-    ):
-        normalCalibration(nodes)  # lNode should be rNode's lNode and vice versa
-    else:
-        irregularCalibration(nodes)  # lNode should be rNode's rNode and vice versa
-
-
-def normalCalibration(nodes: list[Node]) -> None:
-    """
-    This calibrates the node assuming that the left most point is counter clockwise to the right most point
-    In other words, rNode's lNode would be lNode, and lNode's rNode would be rNode.
-    """
-    rNode = nodes[2]
-    mNode = nodes[1]
-    lNode = nodes[0]
-
-    rNode.set_lNode(lNode)
-    rNode.set_rNode(mNode)
-
-    lNode.set_lNode(mNode)
-    lNode.set_rNode(rNode)
-
-    mNode.set_lNode(lNode)
-    mNode.set_rNode(rNode)
-
-
-def irregularCalibration(nodes: list[Node]) -> None:
-    """
-    This calibrates the node assuming that the left most point is  NOT counter clockwise to the right most point
-    In other words, rNode's lNode would be mNode, and lNode's mNode would be rNode.
-    """
-    rNode = nodes[2]
-    mNode = nodes[1]
-    lNode = nodes[0]
-
-    rNode.set_rNode(lNode)
-    rNode.set_lNode(mNode)
-
-    lNode.set_rNode(mNode)
-    lNode.set_lNode(rNode)
-
-    mNode.set_rNode(lNode)
-    mNode.set_lNode(rNode)
 
 
 def calculate_slope(point1: tuple[float, float], point2: tuple[float, float]) -> float:
