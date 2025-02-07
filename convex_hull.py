@@ -14,8 +14,18 @@ They do not like my Node class, specifically that lnode can be of type str/None.
 Next task: Figure out why the tests are angry
 Also making a github repo would be a good thing for this project. Maybe even all of the projects. 
 """
+# Time: O(nlogn)
+# sorting takes O(nlogn)
+# divide_and_conquer also takes O(nlogn)
+# going through each node to insert into resList at worst takes O(n)
+# Total = nlogn + nlogn + n = O(nlogn)
 
 
+# Space: O(n)
+# Input = n
+# Python sorting at worst takes O(n) space
+# divide_and_conquer takes O(n) space as well
+# total = n + n = O(n)
 def compute_hull(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
     """Return the subset of provided points that define the convex hull"""
     # sort hull points by x-coordinate
@@ -36,7 +46,18 @@ def compute_hull(points: list[tuple[float, float]]) -> list[tuple[float, float]]
     return resList
 
 
-# actually want this to return a list of nodes
+# O(nlogn)
+# Time: creates two new problems of half the size. Combining operation takes O(n), so whole equation == T(n) = 2T(n/2) + O(n)
+# According to the master theorem: if we put a/b^d we get 2/2^1 which == 1. If this == 1, then we have T(n) = O(n^d logn).
+# d is just 1, so we end up with O(nlogn) for time complexity
+
+
+# O(n)
+# Space: The input is of size n, and we create a node for every input, so we end up with n nodes
+# We are creating new lists, but those lists only have a constant 2 elements
+# We are using recursion which utilizes the stack, however we split the problem in half with each call
+# The maximum depth reached will be depth = log base 2 of n. So our space complexity for the stack is O(logn)
+# Combining everyhting, we get n (input) + n (nodes created) + logn (stack storage). The n dominates, so we get O(n)
 def divide_and_conquer(points: list[tuple[float, float]]) -> list[Node]:
     if len(points) == 1:
         return createNodes(points)
@@ -48,6 +69,10 @@ def divide_and_conquer(points: list[tuple[float, float]]) -> list[Node]:
         return combinedList
 
 
+# calculating upper/lower tangents is linear time O(n), and constant space complexity.
+# removing bad nodes is constant space and time.
+# Overall time = O(n) + O(constant) = O(n)
+# Overall Space = O(constant)
 def combine(lList: list[Node], rList: list[Node]) -> list[Node]:
     # find upper tangent
     upperBound: tuple[Node | None, Node | None] = findUpperTangent(lList, rList)
@@ -59,6 +84,8 @@ def combine(lList: list[Node], rList: list[Node]) -> list[Node]:
     return newList
 
 
+# time/space: There are no loops, and every operation in this function is constant. No new data structures are created, it's just new assignments
+# so this entire function is constant space/time complexity
 def removeBadNodeConnections(
     upperBound: tuple[Node | None, Node | None],
     lowerBound: tuple[Node | None, Node | None],
@@ -80,6 +107,10 @@ def removeBadNodeConnections(
         draw_line(leftLower.get_point(), rightLower.get_point())
 
 
+# Time: at worst, the left and right most points will be at the very bottom, and every node will have to
+# be checked twice, making this O(2n) where n is the lenght of the left and right lists. So this will be linear: O(n)
+# Space: There is no recursion, and we only create a constant numbber of variables to hold the nodes, so this is constant space.
+# although we might change leftTangent/rightTangent n times, assuming we are just replacing the old variable, this is still constant.
 def findUpperTangent(
     lList: list[Node], rList: list[Node]
 ) -> tuple[Node | None, Node | None]:
@@ -107,6 +138,8 @@ def findUpperTangent(
     return temp
 
 
+# time complexity: calculating slope is constant, comparison also constant, so time complexity of O(constant)
+# space complexity: two values to hold slopes, this is also constant. O(constant)
 def upperLeftNotCalibrated(lNode: Node | None, rNode: Node | None) -> bool:
     """
     Upper left is not calibrated as long as if we went counter clockwise, we got a lower slope
