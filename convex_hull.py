@@ -17,7 +17,7 @@ Also making a github repo would be a good thing for this project. Maybe even all
 # Time: O(nlogn)
 # sorting takes O(nlogn)
 # divide_and_conquer also takes O(nlogn)
-# going through each node to insert into resList at worst takes O(n)
+# result list takes O(n)
 # Total = nlogn + nlogn + n = O(nlogn)
 
 
@@ -25,24 +25,31 @@ Also making a github repo would be a good thing for this project. Maybe even all
 # Input = n
 # Python sorting at worst takes O(n) space
 # divide_and_conquer takes O(n) space as well
-# total = n + n = O(n)
+# making result list as worst takes O(n)
+# total = n + n + n = O(n)
 def compute_hull(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
     """Return the subset of provided points that define the convex hull"""
-    # sort hull points by x-coordinate
 
-    points = sorted(points, key=lambda point: point[0])
+    points = sorted(
+        points, key=lambda point: point[0]
+    )  # sort hull points by x-coordinate
     plot_points(points)
 
     node_list: list[Node] = divide_and_conquer(points)
+    resList: list[tuple[float, float]] = makeResultList(node_list[0])
 
+    return resList
+
+
+# time: going through each node to insert into resList at worst takes O(n)
+# space: makes list at worst of length n = O(n)
+def makeResultList(originNode: Node) -> list[tuple[float, float]]:
     resList: list[tuple[float, float]] = []
-    firstNode = node_list[0]
-    resList.append(firstNode.get_point())  # type: ignore
-    nextNode = firstNode.get_rNode()
-    while nextNode != firstNode and nextNode:
+    resList.append(originNode.get_point())  # type: ignore
+    nextNode = originNode.get_rNode()
+    while nextNode != originNode and nextNode:
         resList.append(nextNode.get_point())
         nextNode = nextNode.get_rNode()
-    assert is_convex_hull(resList, points)
     return resList
 
 
