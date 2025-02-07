@@ -192,28 +192,10 @@ def lowerRightNotCalibrated(lNode: Node | None, rNode: Node | None) -> bool:
 
 
 def createNodes(points: list[tuple[float, float]]) -> list[Node]:
-    if len(points) == 1:
-        soloNode = Node(points[0])
-        soloNode.set_lNode(soloNode)
-        soloNode.set_rNode(soloNode)
-        return [soloNode]
-    elif len(points) == 2:
-        lNode = Node(points[0])
-        rNode = Node(points[1], lNode, lNode)
-        lNode.set_lNode(rNode)
-        lNode.set_rNode(rNode)
-        draw_line(lNode.get_point(), rNode.get_point())
-        return [lNode, rNode]
-    else:
-        lNode = Node(points[0])
-        mNode = Node(points[1])
-        rNode = Node(points[2])
-        nodeList = [lNode, mNode, rNode]
-        calibrateTriangle(nodeList)
-        draw_line(points[0], points[1])
-        draw_line(points[1], points[2])
-        draw_line(points[2], points[0])
-        return nodeList
+    soloNode = Node(points[0])
+    soloNode.set_lNode(soloNode)
+    soloNode.set_rNode(soloNode)
+    return [soloNode]
 
 
 def calibrateTriangle(nodes: list[Node]) -> None:
