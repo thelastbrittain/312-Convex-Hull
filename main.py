@@ -17,6 +17,7 @@ def main(n: int, distribution: str, seed: int | None):
     draw_hull(hull_points)
     title(f"{n} {distribution} points: {round(end - start, 4)} seconds")
     show_plot()
+    print()
 
 
 if __name__ == "__main__":
@@ -25,14 +26,8 @@ if __name__ == "__main__":
     import sys
 
     # regular plotting
-    # sys.argv = [
-    #     "main.py",
-    #     "-n",
-    #     "10",
-    #     "--seed",
-    #     "312",
-    # ]
-    sys.argv = ["main.py", "-n", "12", "--seed", "312", "--debug"]  # debug plotting
+    # sys.argv = ["main.py", "-n", "1000", "--seed", "312", "-d"]
+    sys.argv = ["main.py", "-n", "1000", "--seed", "312", "--debug"]  # debug plotting
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

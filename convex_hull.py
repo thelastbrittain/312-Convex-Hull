@@ -1,8 +1,8 @@
 # Uncomment this line to import some functions that can help
 # you debug your algorithm
-from plotting import draw_line, plot_points  # type: ignore
+from plotting import draw_line, plot_points, draw_hull  # type: ignore
 from NodeClass import Node
-from test_utils import is_convex_hull  # type: ignore
+
 
 """"
 Work log:
@@ -37,7 +37,7 @@ def compute_hull(points: list[tuple[float, float]]) -> list[tuple[float, float]]
 
     node_list: list[Node] = divide_and_conquer(points)
     resList: list[tuple[float, float]] = makeResultList(node_list[0])
-
+    draw_hull(resList)
     return resList
 
 
@@ -77,7 +77,7 @@ def divide_and_conquer(points: list[tuple[float, float]]) -> list[Node]:
 
 
 # calculating upper/lower tangents is linear time O(n), and constant space complexity.
-# removing bad nodes is constant space and time.
+# removing bad nodes is constant space and time. It is just reassignign pointers in the left and rightmost nodes
 # Overall time = O(n) + O(constant) = O(n)
 # Overall Space = O(constant)
 def combine(lList: list[Node], rList: list[Node]) -> list[Node]:
@@ -108,10 +108,10 @@ def removeBadNodeConnections(
     if leftUpper and leftLower and rightLower and rightUpper:
         leftUpper.set_rNode(rightUpper)
         rightUpper.set_lNode(leftUpper)
-        draw_line(leftUpper.get_point(), rightUpper.get_point())
+        # draw_line(leftUpper.get_point(), rightUpper.get_point())
         leftLower.set_lNode(rightLower)
         rightLower.set_rNode(leftLower)
-        draw_line(leftLower.get_point(), rightLower.get_point())
+        # draw_line(leftLower.get_point(), rightLower.get_point())
 
 
 # Time: at worst, the left and right most points will be at the very bottom, and every node will have to
@@ -124,7 +124,7 @@ def findUpperTangent(
     leftTangent: Node | None = lList[len(lList) - 1]
     rightTangent: Node | None = rList[0]
     temp = (leftTangent, rightTangent)
-    draw_line(rightTangent.get_point(), leftTangent.get_point())  # type: ignore
+    # draw_line(rightTangent.get_point(), leftTangent.get_point())  # type: ignore
 
     done = False
     while not done:
@@ -133,20 +133,20 @@ def findUpperTangent(
             if leftTangent is not None:
                 leftTangent = leftTangent.get_lNode()
                 temp = (leftTangent, rightTangent)
-                draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
+                # draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
                 done = False
         while upperRightNotCalibrated(temp[0], temp[1]):
             if rightTangent is not None:
                 rightTangent = rightTangent.get_rNode()
                 temp = (leftTangent, rightTangent)
-                draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
+                # draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
                 done = False
 
     return temp
 
 
-# time complexity: calculating slope is constant, comparison also constant, so time complexity of O(constant)
-# space complexity: two values to hold slopes, this is also constant. O(constant)
+# time complexity: calculating slope is constant, comparison also constant, so time complexity is O(constant)
+# space complexity: two values are required to hold slopes, this is also constant. O(constant)
 def upperLeftNotCalibrated(lNode: Node | None, rNode: Node | None) -> bool:
     """
     Upper left is not calibrated as long as if we went counter clockwise, we got a lower slope
@@ -181,7 +181,7 @@ def findLowerTangent(
     rightTangent: Node | None = rList[0]
     temp = (leftTangent, rightTangent)
 
-    draw_line(rightTangent.get_point(), leftTangent.get_point())  # type: ignore
+    # draw_line(rightTangent.get_point(), leftTangent.get_point())  # type: ignore
 
     done = False
     while not done:
@@ -190,13 +190,13 @@ def findLowerTangent(
             if leftTangent is not None:
                 leftTangent = leftTangent.get_rNode()
                 temp = (leftTangent, rightTangent)
-                draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
+                # draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
                 done = False
         while lowerRightNotCalibrated(temp[0], temp[1]):
             if rightTangent is not None:
                 rightTangent = rightTangent.get_lNode()
                 temp = (leftTangent, rightTangent)
-                draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
+                # draw_line(leftTangent.get_point(), rightTangent.get_point())  # type: ignore
                 done = False
 
     return temp
